@@ -32,14 +32,6 @@ type Board struct {
 	Snakes []Battlesnake `json:"snakes"`
 }
 
-type BattlesnakeInfoResponse struct {
-	APIVersion string `json:"apiversion"`
-	Author     string `json:"author"`
-	Color      string `json:"color"`
-	Head       string `json:"head"`
-	Tail       string `json:"tail"`
-}
-
 type GameRequest struct {
 	Game  Game        `json:"game"`
 	Turn  int         `json:"turn"`
@@ -50,4 +42,12 @@ type GameRequest struct {
 type MoveResponse struct {
 	Move  string `json:"move"`
 	Shout string `json:"shout,omitempty"`
+}
+
+type BattlesnakeInfoResponse struct {
+	APIVersion string `json:"apiversion"`
+	Author     string `json:"author"`
+	Color      string `json:"color"`
+	Head       string `json:"head"`
+	Tail       string `json:"tail"`
 }

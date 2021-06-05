@@ -20,6 +20,6 @@ func main() {
 	http.HandleFunc("/move", api.HandleMove)
 	http.HandleFunc("/end", api.HandleEnd)
 
-	fmt.Printf("Starting Battlesnake Server at http://0.0.0.0:%s...\n", port)
+	fmt.Printf("starting battlesnake server at http://0.0.0.0:%s\n", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

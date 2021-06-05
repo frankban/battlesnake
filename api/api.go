@@ -42,7 +42,7 @@ func HandleMove(w http.ResponseWriter, r *http.Request) {
 		Move: string(move),
 	}
 
-	fmt.Printf("MOVE: %s\n", resp.Move)
+	fmt.Printf("move: %s\n", resp.Move)
 	writeResponse(w, resp)
 }
 
