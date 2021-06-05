@@ -135,17 +135,18 @@ func freeCellsFrom(board params.Board, c params.Coord) int {
 			taken[c] = true
 		}
 	}
-	freeCellsFrom0(c, free, taken)
+	freeCellsFrom0(c, board, free, taken)
 	return len(free)
 }
 
-func freeCellsFrom0(c params.Coord, free, taken map[params.Coord]bool) {
+func freeCellsFrom0(c params.Coord, board params.Board, free, taken map[params.Coord]bool) {
+	fmt.Printf("calculating free cells from %v\n", c)
 	for _, d := range directions {
 		next := nextCoord(c, d)
-		if taken[next] || free[next] {
+		if next.OffBoard(board) || taken[next] || free[next] {
 			continue
 		}
 		free[next] = true
-		freeCellsFrom0(next, free, taken)
+		freeCellsFrom0(next, board, free, taken)
 	}
 }
