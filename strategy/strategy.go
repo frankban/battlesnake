@@ -41,10 +41,11 @@ func Move(state *params.GameRequest) Direction {
 	for _, d := range ds {
 		s := nextSnake(state.You, state.Board, d)
 		board := nextBoard(s, state.Board)
-		if free := freeCellsFrom(board, s.Head); free > freeCells {
+		free := freeCellsFrom(board, s.Head)
+		fmt.Printf("  found %d free cells going %s\n", free, result)
+		if free > freeCells {
 			freeCells = free
 			result = d
-			fmt.Printf("  found %d free cells going %s\n", freeCells, result)
 		}
 	}
 
