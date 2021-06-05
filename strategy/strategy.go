@@ -2,6 +2,7 @@ package strategy
 
 import (
 	"fmt"
+	"math/rand"
 
 	"github.com/frankban/battlesnake/params"
 )
@@ -34,6 +35,7 @@ func Move(state *params.GameRequest) Direction {
 	}
 
 	// Then refine the selection.
+	rand.Shuffle(len(ds), func(i, j int) { ds[i], ds[j] = ds[j], ds[i] })
 	var result Direction
 	var freeCells int
 	for _, d := range ds {
@@ -140,7 +142,6 @@ func freeCellsFrom(board params.Board, c params.Coord) int {
 }
 
 func freeCellsFrom0(c params.Coord, board params.Board, free, taken map[params.Coord]bool) {
-	fmt.Printf("calculating free cells from %v\n", c)
 	for _, d := range directions {
 		next := nextCoord(c, d)
 		if next.OffBoard(board) || taken[next] || free[next] {
