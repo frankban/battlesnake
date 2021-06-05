@@ -29,7 +29,7 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 // TODO: Use this function to decide how your Battlesnake is going to look on the board.
 func HandleStart(w http.ResponseWriter, r *http.Request) {
 	// Nothing to respond with here.
-	fmt.Print("START\n")
+	fmt.Print("start\n")
 }
 
 // HandleMove is called for each turn of each game.
@@ -42,7 +42,7 @@ func HandleMove(w http.ResponseWriter, r *http.Request) {
 		Move: string(move),
 	}
 
-	fmt.Printf("move: %s\n", resp.Move)
+	fmt.Printf("move %d: %s\n", state.Turn, resp.Move)
 	writeResponse(w, resp)
 }
 
@@ -50,7 +50,7 @@ func HandleMove(w http.ResponseWriter, r *http.Request) {
 // It's purely for informational purposes, no response required.
 func HandleEnd(w http.ResponseWriter, r *http.Request) {
 	// Nothing to respond with here.
-	fmt.Print("END\n")
+	fmt.Print("end\n")
 }
 
 func getState(r *http.Request) (state *params.GameRequest) {

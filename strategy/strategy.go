@@ -7,6 +7,7 @@ import (
 	"github.com/frankban/battlesnake/params"
 )
 
+// Direction holds the direction of a single move.
 type Direction string
 
 const (
@@ -20,15 +21,34 @@ var directions = []Direction{up, down, left, right}
 
 // returns the direction of battlesnake's next move.
 func Move(state *params.GameRequest) Direction {
+	// start := time.Now()
+
+	// First exclude moves leadign to immediate death.
 	ds := possibleDirections(state.You, state.Board)
 	switch len(ds) {
 	case 0:
-		fmt.Print("there is no tomorrow: turn left")
+		fmt.Println("there is no tomorrow: turn left!")
 		return left
 	case 1:
-		fmt.Print("one choice only")
+		fmt.Println("one choice only")
 		return ds[0]
 	}
+
+	// // Then refine the selection, but without running out of time.
+	// badMoves := make(chan Direction, 1)
+	// badMoves := refine()
+	// d := state.Game.Timeout*time.Millisecond - time.Since(start).Milliseconds() - 50*time.Millisecond
+	// for {
+	// 	select {
+	// 	case badMove := <-badMoves:
+
+	// 		fmt.Println(res)
+	// 	case <-time.After(d):
+	// 		fmt.Println("running out of time")
+	// 		break
+	// 	}
+	// }
+
 	return ds[rand.Intn(len(ds))]
 }
 
