@@ -22,7 +22,7 @@ var directions = []Direction{up, down, left, right}
 
 // returns the direction of battlesnake's next move.
 func Move(state *params.GameRequest) Direction {
-	start := time.Now()
+	//start := time.Now()
 
 	// First exclude moves leadign to immediate death.
 	ds := possibleDirections(state.You, state.Board)
