@@ -74,7 +74,7 @@ func Move(state *params.GameRequest) Direction {
 		}
 
 		dscore := sc.Score()
-		fmt.Printf("  score going %s: %s = %d\n", d, sc, dscore)
+		fmt.Printf("  score going %s: %s -> %d\n", d, sc, dscore)
 		if dscore > totalScore {
 			totalScore = dscore
 			result = d
@@ -190,7 +190,7 @@ type score struct {
 }
 
 func (sc score) String() string {
-	return fmt.Sprintf("%d free cells, %d for food presence, %d for head presence", sc.cells, sc.food, sc.heads)
+	return fmt.Sprintf("%d cells, %d food, %d heads", sc.cells, sc.food, sc.heads)
 }
 
 func (sc score) Score() int {
