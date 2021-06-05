@@ -33,6 +33,7 @@ func Move(state *params.GameRequest) Direction {
 		fmt.Println("  one choice only")
 		return ds[0]
 	}
+	fmt.Printf("possible directions: %#v\n", ds)
 
 	// Then refine the selection.
 	rand.Shuffle(len(ds), func(i, j int) { ds[i], ds[j] = ds[j], ds[i] })
