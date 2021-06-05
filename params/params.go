@@ -25,6 +25,17 @@ type Battlesnake struct {
 	Shout  string  `json:"shout"`
 }
 
+// HasFood reports whether the snake is currently eating food in the given
+// board.
+func (s Battlesnake) HasFood(b Board) bool {
+	for _, c := range b.Food {
+		if c == s.Head {
+			return true
+		}
+	}
+	return false
+}
+
 type Board struct {
 	Height int           `json:"height"`
 	Width  int           `json:"width"`

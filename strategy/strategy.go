@@ -44,6 +44,10 @@ func Move(state *params.GameRequest) Direction {
 		board := nextBoard(s, state.Board)
 		free := freeCellsFrom(board, s.Head)
 		fmt.Printf("  found %d free cells going %s\n", free, d)
+		if s.Health < 50 && s.HasFood(board) {
+			fmt.Println("  trying to grab some food")
+			free += 2
+		}
 		if free > freeCells {
 			freeCells = free
 			result = d
@@ -81,13 +85,11 @@ func nextCoord(c params.Coord, d Direction) params.Coord {
 func nextSnake(s params.Battlesnake, board params.Board, d Direction) params.Battlesnake {
 	s.Head = nextCoord(s.Head, d)
 	s.Body = append([]params.Coord{s.Head}, s.Body...)
-	for _, c := range board.Food {
-		if c == s.Head {
-			s.Length += 1
-			return s
-		}
+	if s.HasFood(board) {
+		s.Length += 1
+		return s
 	}
-	s.Body = s.Body[:s.Length-1]
+	s.Body = s.Body[:s.Length]
 	return s
 }
 
