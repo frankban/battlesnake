@@ -44,7 +44,7 @@ func Move(state *params.GameRequest) Direction {
 		if free := freeCellsFrom(board, s.Head); free > freeCells {
 			freeCells = free
 			result = d
-			fmt.Printf("found %d free cells going %s", freeCells, result)
+			fmt.Printf("found %d free cells going %s\n", freeCells, result)
 		}
 	}
 
