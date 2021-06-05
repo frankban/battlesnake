@@ -38,18 +38,35 @@ func Move(state *params.GameRequest) Direction {
 	// Then refine the selection.
 	rand.Shuffle(len(ds), func(i, j int) { ds[i], ds[j] = ds[j], ds[i] })
 	var result Direction
-	var freeCells int
+	var totalScore int
 	for _, d := range ds {
+		var sc score
 		s := nextSnake(state.You, state.Board, d)
 		board := nextBoard(s, state.Board)
-		free := freeCellsFrom(board, s.Head)
-		fmt.Printf("  found %d free cells going %s\n", free, d)
-		if s.Health < 50 && s.HasFood(board) {
-			fmt.Println("  trying to grab some food")
-			free += 2
+
+		// Calculate free cells available after this move.
+		sc.cells = freeCellsFrom(board, s.Head)
+
+		// Is the head over food after this move?
+		if s.Health < 50 && s.Head.OverFood(board) {
+			sc.food = 1 + int(50/s.Health)
 		}
-		if free > freeCells {
-			freeCells = free
+
+		// Is the head close to another snake's head after this move?
+		for _, snake := range board.Snakes {
+			if s.Head.CloseTo(snake.Head) {
+				if s.Length > snake.Length {
+					sc.heads = 1
+				} else {
+					sc.heads = -10
+				}
+			}
+		}
+
+		dscore := sc.Score()
+		fmt.Printf("  score going %s: %s = %d\n", d, sc, dscore)
+		if dscore > totalScore {
+			totalScore = dscore
 			result = d
 		}
 	}
@@ -85,7 +102,7 @@ func nextCoord(c params.Coord, d Direction) params.Coord {
 func nextSnake(s params.Battlesnake, board params.Board, d Direction) params.Battlesnake {
 	s.Head = nextCoord(s.Head, d)
 	s.Body = append([]params.Coord{s.Head}, s.Body...)
-	if s.HasFood(board) {
+	if s.Head.OverFood(board) {
 		s.Length += 1
 		return s
 	}
@@ -119,7 +136,7 @@ outer:
 
 		// Do not hit snake bodies.
 		for _, s := range board.Snakes {
-			for _, c := range s.Body[1:] {
+			for _, c := range s.Body {
 				if next == c {
 					continue outer
 				}
@@ -154,4 +171,18 @@ func freeCellsFrom0(c params.Coord, board params.Board, free, taken map[params.C
 		free[next] = true
 		freeCellsFrom0(next, board, free, taken)
 	}
+}
+
+type score struct {
+	cells int
+	food  int
+	heads int
+}
+
+func (sc score) String() string {
+	return fmt.Sprintf("%d free cells, %d for food presence, %d for head presence", sc.cells, sc.food, sc.heads)
+}
+
+func (sc score) Score() int {
+	return sc.cells + sc.food + sc.heads
 }

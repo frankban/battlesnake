@@ -15,6 +15,29 @@ func (c Coord) OffBoard(b Board) bool {
 	return c.X < 0 || c.Y < 0 || c.X >= b.Width || c.Y >= b.Height
 }
 
+// CloseTo reports whether the coordinate is close to the given one.
+func (c Coord) CloseTo(other Coord) bool {
+	return abs(c.X-other.X)+abs(c.Y-other.Y) == 1
+}
+
+// abs returns the absolute value of x.
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
+// OverFood reports whether the coordinate is over food.
+func (c Coord) OverFood(b Board) bool {
+	for _, coord := range b.Food {
+		if coord == c {
+			return true
+		}
+	}
+	return false
+}
+
 type Battlesnake struct {
 	ID     string  `json:"id"`
 	Name   string  `json:"name"`
@@ -23,17 +46,6 @@ type Battlesnake struct {
 	Head   Coord   `json:"head"`
 	Length int32   `json:"length"`
 	Shout  string  `json:"shout"`
-}
-
-// HasFood reports whether the snake is currently eating food in the given
-// board.
-func (s Battlesnake) HasFood(b Board) bool {
-	for _, c := range b.Food {
-		if c == s.Head {
-			return true
-		}
-	}
-	return false
 }
 
 type Board struct {
