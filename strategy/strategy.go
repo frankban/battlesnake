@@ -39,7 +39,8 @@ func Move(state *params.GameRequest) Direction {
 	suggestions := make(chan Direction)
 	done := make(chan bool)
 	go refine(state, ds, suggestions, done)
-	deadline := time.Duration(int64(state.Game.Timeout)-time.Since(start).Milliseconds()-50) * time.Millisecond
+	//deadline := time.Duration(int64(state.Game.Timeout)-time.Since(start).Milliseconds()-50) * time.Millisecond
+	deadline := 400 * time.Millisecond
 outer:
 	for {
 		select {
