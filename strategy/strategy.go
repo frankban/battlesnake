@@ -52,13 +52,23 @@ func Move(state *params.GameRequest) Direction {
 			sc.food = 1 + int(50/s.Health)
 		}
 
+		// Id the head close to food after this move?
+		if s.Health < 10 {
+			for _, food := range board.Food {
+				if s.Head.CloseTo(food) {
+					sc.food += 10
+					break
+				}
+			}
+		}
+
 		// Is the head close to another snake's head after this move?
 		for _, snake := range board.Snakes {
 			if s.Head.CloseTo(snake.Head) {
 				if s.Length > snake.Length {
-					sc.heads = 1
+					sc.heads += 1
 				} else {
-					sc.heads = -10
+					sc.heads -= 10
 				}
 			}
 		}
