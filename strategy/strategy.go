@@ -2,8 +2,6 @@ package strategy
 
 import (
 	"fmt"
-	"math/rand"
-	"time"
 
 	"github.com/frankban/battlesnake/params"
 )
@@ -35,42 +33,20 @@ func Move(state *params.GameRequest) Direction {
 		return ds[0]
 	}
 
-	// Then refine the selection, but without running out of time.
-	suggestions := make(chan Direction)
-	done := make(chan bool)
-	go refine(state, ds, suggestions, done)
-	//deadline := time.Duration(int64(state.Game.Timeout)-time.Since(start).Milliseconds()-50) * time.Millisecond
-	deadline := 400 * time.Millisecond
-outer:
-	for {
-		select {
-		case d := <-suggestions:
-			fmt.Printf("found suggestion while refining: %s\n", d)
-			close(done)
-			return d
-		case <-time.After(deadline):
-			fmt.Println("running out of time")
-			close(done)
-			break outer
-		}
-	}
-
-	return ds[rand.Intn(len(ds))]
-}
-
-func refine(state *params.GameRequest, ds []Direction, suggestions chan Direction, done chan bool) {
-	var suggestion Direction
+	// Then refine the selection.
+	var result Direction
 	var freeCells int
 	for _, d := range ds {
 		s := nextSnake(state.You, state.Board, d)
 		board := nextBoard(s, state.Board)
 		if free := freeCellsFrom(board, s.Head); free > freeCells {
 			freeCells = free
-			suggestion = d
-			fmt.Printf("found %d free cells going %s", freeCells, suggestion)
+			result = d
+			fmt.Printf("found %d free cells going %s", freeCells, result)
 		}
 	}
-	suggestions <- suggestion
+
+	return result
 }
 
 func nextCoord(c params.Coord, d Direction) params.Coord {
