@@ -27,10 +27,10 @@ func Move(state *params.GameRequest) Direction {
 	ds := possibleDirections(state.You, state.Board)
 	switch len(ds) {
 	case 0:
-		fmt.Println("there is no tomorrow: turn left!")
+		fmt.Println("  there is no tomorrow: turn left!")
 		return left
 	case 1:
-		fmt.Println("one choice only")
+		fmt.Println("  one choice only")
 		return ds[0]
 	}
 
@@ -44,7 +44,7 @@ func Move(state *params.GameRequest) Direction {
 		if free := freeCellsFrom(board, s.Head); free > freeCells {
 			freeCells = free
 			result = d
-			fmt.Printf("found %d free cells going %s\n", freeCells, result)
+			fmt.Printf("  found %d free cells going %s\n", freeCells, result)
 		}
 	}
 
