@@ -36,13 +36,13 @@ func HandleStart(w http.ResponseWriter, r *http.Request) {
 // Valid responses are "up", "down", "left", or "right".
 func HandleMove(w http.ResponseWriter, r *http.Request) {
 	state := getState(r)
-	move := strategy.Move(state)
+	fmt.Printf("* turn %d: start\n", state.Turn)
 
 	resp := params.MoveResponse{
-		Move: string(move),
+		Move: string(strategy.Move(state)),
 	}
 
-	fmt.Printf("* move %d: %s\n", state.Turn, resp.Move)
+	fmt.Printf("* move %d: %s\n\n", state.Turn, resp.Move)
 	writeResponse(w, resp)
 }
 

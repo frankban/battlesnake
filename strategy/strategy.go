@@ -65,10 +65,10 @@ func Move(state *params.GameRequest) Direction {
 		// Is the head close to another snake's head after this move?
 		for _, snake := range board.Snakes {
 			if s.Head.CloseTo(snake.Head) {
-				if s.Length > snake.Length {
+				if state.You.Length > snake.Length {
 					sc.heads += 1
 				} else {
-					sc.heads -= 10
+					sc.heads = -10
 				}
 			}
 		}
