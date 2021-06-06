@@ -15,9 +15,41 @@ func (c Coord) OffBoard(b Board) bool {
 	return c.X < 0 || c.Y < 0 || c.X >= b.Width || c.Y >= b.Height
 }
 
-// CloseTo reports whether the coordinate is close to the given one.
-func (c Coord) CloseTo(other Coord) bool {
-	return abs(c.X-other.X)+abs(c.Y-other.Y) == 1
+// Distance returns the cells distance between the coordinates.
+func (c Coord) Distance(other Coord) int {
+	return abs(c.X-other.X) + abs(c.Y-other.Y)
+}
+
+// CloserFood returns the coordinates and the distance of the food closer to
+// this coordinate, but not corresponding to the coordinate. A distance of 0 is
+// returned if there is no food in the board.
+func (c Coord) CloserFood(b Board) (food Coord, distance int) {
+	for _, f := range b.Food {
+		if f == c {
+			continue
+		}
+		if v := c.Distance(f); v < distance || distance == 0 {
+			food = f
+			distance = v
+		}
+	}
+	return food, distance
+}
+
+// CloserSnake returns the coordinates and the distance of the snake head closer to
+// this coordinate, but not corresponding to the coordinate. A distance of 0 is
+// returned if there are no snakes in the board.
+func (c Coord) CloserSnake(b Board) (snake Battlesnake, distance int) {
+	for _, s := range b.Snakes {
+		if s.Head == c {
+			continue
+		}
+		if v := c.Distance(s.Head); v < distance || distance == 0 {
+			snake = s
+			distance = v
+		}
+	}
+	return snake, distance
 }
 
 // abs returns the absolute value of x.

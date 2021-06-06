@@ -39,43 +39,47 @@ func Move(state *params.GameRequest) Direction {
 	var result Direction
 	var totalScore int
 	for _, d := range ds {
-		var sc score
+		fmt.Printf("  score going %s:\n", d)
 		s := nextSnake(state.You, state.Board, d)
 		board := nextBoard(s, state.Board)
 
 		// Calculate free cells available after this move.
-		sc.cells = freeCellsFrom(board, s.Head)
+		score := freeCellsFrom(board, s.Head)
+		fmt.Printf("    %d from free cells\n", score)
 
-		// Is the head over food after this move?
 		if s.Health < 50 && s.Head.OverFood(board) {
-			sc.food = 1 + int(50/s.Health)
-		}
-
-		// Id the head close to food after this move?
-		if s.Health < 10 {
-			for _, food := range board.Food {
-				if s.Head.CloseTo(food) {
-					sc.food += 10
-					break
-				}
+			// The head is over food.
+			sc := 1 + int(50/s.Health)
+			fmt.Printf("    %d because over food\n", sc)
+			score += sc
+		} else if s.Health < 10 {
+			// How closer the snake gets to food if it is starving?
+			if _, distance := s.Head.CloserFood(board); distance != 0 {
+				sc := (state.Board.Height+state.Board.Width)/2 - distance
+				fmt.Printf("    %d for getting closer to food\n", sc)
+				score += sc
 			}
 		}
 
-		// Is the head close to another snake's head after this move?
-		for _, snake := range board.Snakes {
-			if s.Head.CloseTo(snake.Head) {
-				if state.You.Length > snake.Length {
-					sc.heads += 1
-				} else {
-					sc.heads = -10
+		// Is the head close to another snake's head after this move, and can
+		// they collide?
+		if snake, distance := s.Head.CloserSnake(board); !isEven(distance) {
+			var sc int
+			if state.You.Length > snake.Length {
+				if distance == 1 {
+					sc = 1
+					fmt.Printf("    %d for getting closer to shorter snake\n", sc)
 				}
+			} else {
+				sc = -((state.Board.Height+state.Board.Width)/2 - distance)
+				fmt.Printf("    %d for getting closer to longer snake\n", sc)
 			}
+			score += sc
 		}
 
-		dscore := sc.Score()
-		fmt.Printf("  score going %s: %s -> %d\n", d, sc, dscore)
-		if dscore > totalScore {
-			totalScore = dscore
+		fmt.Printf("    total: %d\n", score)
+		if score > totalScore {
+			totalScore = score
 			result = d
 		}
 	}
@@ -182,16 +186,7 @@ func freeCellsFrom0(c params.Coord, board params.Board, free, taken map[params.C
 	}
 }
 
-type score struct {
-	cells int
-	food  int
-	heads int
-}
-
-func (sc score) String() string {
-	return fmt.Sprintf("%d cells, %d food, %d heads", sc.cells, sc.food, sc.heads)
-}
-
-func (sc score) Score() int {
-	return sc.cells + sc.food + sc.heads
+// isEven reports whether the number is even.
+func isEven(n int) bool {
+	return n%2 == 0
 }
